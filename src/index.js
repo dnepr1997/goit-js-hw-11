@@ -21,6 +21,7 @@ let queryString = '';
 let page = 1;
 let gallery;
 
+
 const MAIN_URL = 'https://pixabay.com/api/';
 const KEY = '41300969-1e734e71ff54bafcbf52be043';
 const galleryItem = document.querySelector('.gallery');
@@ -135,7 +136,6 @@ function onLastItem(entries) {
   
     if (page * 40 >= response.totalHits) {
       Notiflix.Notify.warning("We're sorry, but you've reached the end of search results");
-      loadMoreBtn.style.display = 'none';
     }
       };
 }
