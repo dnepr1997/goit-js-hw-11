@@ -98,12 +98,11 @@ function createLayout({ hits, total }) {
                </div>
              </a> `;
     }).join('');
-  destroyGalerry();
+  destroyGalerry()
   galleryItem.insertAdjacentHTML('beforeend', res);
   gallery = new SimpleLightbox('.gallery a');
   page += 1;
   observer.observe(target);
-
   if (total <= page * params.per_page - params.per_page) {
     observer.unobserve(target);
   }
@@ -131,16 +130,23 @@ function smoothScroll(galleryItem, scrollPercentage) {
 function onLastItem(entries) {
   if (entries[0].isIntersecting) {
     fetchQuery(queryString)
-      .then(response => addLayout(response))
+      .then(response => {
+        
+        if (page * 40 >= response.data.totalHits) {
+          Notiflix.Notify.warning(
+            "We're sorry, but you've reached the end of search results"
+          );
+        }
+        return addLayout(response);
+      })
       .catch(err => console.log(err));
-  
-    if (page * 40 >= response.totalHits) {
-      Notiflix.Notify.warning("We're sorry, but you've reached the end of search results");
-    }
-      };
+  }
 }
+
+
+
 async function destroyGalerry(){
-   await gallery.refresh();
+  await gallery.refresh();
 }
 
 
