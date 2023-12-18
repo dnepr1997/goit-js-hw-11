@@ -125,19 +125,22 @@ function smoothScroll(galleryItem, scrollPercentage) {
     top: cardHeight * scrollPercentage,
     behavior: 'smooth',
   });
-  if(page * 40 >= response.totalHits) {
-        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results");
-        loadMoreBtn.style.display = 'none';
-      };
 }
+
 function onLastItem(entries) {
   if (entries[0].isIntersecting) {
     fetchQuery(queryString)
       .then(response => addLayout(response))
       .catch(err => console.log(err));
   }
+  if(page * 40 >= response.totalHits) {
+        Notiflix.Notify.warning("We're sorry, but you've reached the end of search results");
+        loadMoreBtn.style.display = 'none';
+      };
 }
 async function destroyGalerry(){
-  await gallery.refresh();
-  
+   await gallery.refresh();
 }
+
+
+
