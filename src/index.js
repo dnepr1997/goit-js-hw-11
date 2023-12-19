@@ -21,7 +21,6 @@ let queryString = '';
 let page = 1;
 let gallery;
 
-
 const MAIN_URL = 'https://pixabay.com/api/';
 const KEY = '41300969-1e734e71ff54bafcbf52be043';
 const galleryItem = document.querySelector('.gallery');
@@ -31,11 +30,7 @@ const target = document.querySelector('.js-guard');
 const form = document.querySelector('#search-form');
 form.addEventListener('submit', onSubmit);
 
-fetchQuery('photo')
-  .then(response => addLayout(response))
-  .catch(err => console.log(err));
-
-async function onSubmit(event) {
+function onSubmit(event) {
   event.preventDefault();
   observer.unobserve(target);
   galleryItem.innerHTML = '';
@@ -47,7 +42,7 @@ async function onSubmit(event) {
     .toLowerCase()
     .replaceAll(' ', '+');
 
-  await fetchQuery(queryString)
+  fetchQuery(queryString)
     .then(response => {
       addLayout(response);
     })
@@ -97,10 +92,16 @@ function createLayout({ hits, total }) {
                     </div>
                </div>
              </a> `;
-    }).join('');
-  destroyGalerry()
+    })
+    .join('');
   galleryItem.insertAdjacentHTML('beforeend', res);
-  gallery = new SimpleLightbox('.gallery a');
+
+  if (!gallery) {
+    gallery = new SimpleLightbox('.gallery a');
+  } else {
+    gallery.destroy();
+    gallery = new SimpleLightbox('.gallery a');
+  }
   page += 1;
   observer.observe(target);
   if (total <= page * params.per_page - params.per_page) {
@@ -112,10 +113,6 @@ function createLayout({ hits, total }) {
   upperBtn.removeAttribute('disabled');
   upperBtn.style.fillOpacity = 1;
   upperBtn.style.cursor = 'pointer';
-
-  upperBtn.onclick = () => {
-    window.scrollTo(0, 0);
-  };
 }
 
 function smoothScroll(galleryItem, scrollPercentage) {
@@ -131,23 +128,13 @@ function onLastItem(entries) {
   if (entries[0].isIntersecting) {
     fetchQuery(queryString)
       .then(response => {
-        
         if (page * 40 >= response.data.totalHits) {
           Notiflix.Notify.warning(
             "We're sorry, but you've reached the end of search results"
           );
         }
-        return addLayout(response);
+        addLayout(response);
       })
       .catch(err => console.log(err));
   }
 }
-
-
-
-async function destroyGalerry(){
-  await gallery.refresh();
-}
-
-
-
